@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>E-commerce
+</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background: #f8f8f8;
+        }
+        h1 {
+            text-align: center;
+            color: #222;
+        }
+        nav {
+            text-align: center;
+            margin-top: 15px;
+            margin-bottom: 20px;
+        }
+        nav a {
+            margin: 0 12px;
+            text-decoration: none;
+            color: #007bff;
+            font-size: 18px;
+            font-weight: 500;
+        }
+        nav a:hover {
+            text-decoration: underline;
+        }
+        #cartCount {
+            background: red;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+        /* Image Slider */
+        .slider {
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: auto;
+            overflow: hidden;
+            border-radius: 8px;
+        }
+        .slider img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            display: none;
+        }
+
+        /* Features */
+        .features {
+            margin-top: 25px;
+            text-align: center;
+        }
+        .features h2 {
+            font-size: 22px;
+            margin-bottom: 10px;
+        }
+        .features ul {
+            list-style: none;
+            font-size: 18px;
+            padding: 0;
+        }
+        .features ul li {
+            margin: 6px 0;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>E-commerce
+</h1>
+
+    <nav>
+        <a href="products.html">Products</a> |
+        <a href="cart.html">🛒 Cart <span id="cartCount">0</span></a>
+    </nav>
+
+    <!-- Auto Swapping Image Slider -->
+    <div class="slider">
+        <img class="slide" src="https://images.unsplash.com/photo-1542291026-7eec264c27ff" style="display:block;">
+        <img class="slide" src="https://images.unsplash.com/photo-1512436991641-6745cdb1723f">
+        <img class="slide" src="https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f">
+    </div>
+
+    <!-- Features Section -->
+    <div class="features">
+        <h2>Why Shop With Us?</h2>
+        <ul>
+            <li>✅ Best Quality Products</li>
+            <li>🚚 Fast Delivery</li>
+            <li>💰 Affordable Prices</li>
+            <li>🔄 Easy Return Policy</li>
+        </ul>
+    </div>
+
+    <script>
+        // Cart Count Update
+        function updateCartCount() {
+            const cart = JSON.parse(localStorage.getItem("cart")) || [];
+            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+            document.getElementById("cartCount").innerText = totalItems;
+        }
+        updateCartCount();
+
+        // Auto Image Swap
+        let index = 0;
+        const slides = document.querySelectorAll(".slide");
+
+        setInterval(() => {
+            slides.forEach(img => img.style.display = "none");
+            index = (index + 1) % slides.length;
+            slides[index].style.display = "block";
+        }, 2500); // 2.5 seconds per image
+    </script>
+
+</body>
+</html>

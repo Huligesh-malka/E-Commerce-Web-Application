@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>My Cart</title>
+  <style>
+    table {
+      width: 80%;
+      margin: 20px auto;
+      border-collapse: collapse;
+    }
+    td, th {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: center;
+    }
+    button {
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+<h2 style="text-align:center;">🛒 My Cart</h2>
+<table>
+  <thead>
+    <tr>
+      <th>Product ID</th>
+      <th>Quantity</th>
+      <th>Remove</th>
+    </tr>
+  </thead>
+  <tbody id="cartItems"></tbody>
+</table>
+
+<script>
+function loadCart() {
+  const cart = JSON.parse(localStorage.getItem("cart")) || [];
+  const cartTable = document.getElementById("cartItems");
+
+  cartTable.innerHTML = "";
+
+  cart.forEach((item, index) => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${item.productId}</td>
+      <td>${item.quantity}</td>
+      <td><button onclick="removeItem(${index})">❌ Remove</button></td>
+    `;
+    cartTable.appendChild(tr);
+  });
+}
+
+function removeItem(index) {
+  let cart = JSON.parse(localStorage.getItem("cart")) || [];
+  cart.splice(index, 1);
+  localStorage.setItem("cart", JSON.stringify(cart));
+  loadCart();
+}
+
+loadCart();
+</script>
+
+</body>
+</html>

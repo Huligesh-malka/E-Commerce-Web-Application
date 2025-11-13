@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Products</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        #productsContainer {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .product {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin: 10px;
+            width: 220px;
+            text-align: center;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            background-color: #fff;
+            transition: transform 0.2s ease;
+        }
+        .product:hover {
+            transform: scale(1.03);
+        }
+        .product img {
+            width: 200px;
+            height: 200px;
+            object-fit: cover;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: block;
+        }
+        .price {
+            font-weight: bold;
+            color: green;
+            font-size: 1.1em;
+        }
+        .mrp span {
+            text-decoration: line-through;
+            color: red;
+            font-size: 0.9em;
+        }
+        .save {
+            color: rgb(1, 139, 1);
+            font-weight: bold;
+            font-size: 0.9em;
+            margin-bottom: 5px;
+        }
+        .tag {
+            display: inline-block;
+            background-color: orange;
+            color: white;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            margin-top: 5px;
+        }
+        .rating {
+            font-size: 0.9em;
+            color: #555;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 8px;
+            font-size: 0.9em;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Products</h1>
+    <div id="productsContainer"></div>
+
+    <script>
+        fetch('http://localhost:8080/api/products')
+            .then(res => res.json())
+            .then(products => {
+                const container = document.getElementById('productsContainer');
+                container.innerHTML = '';
+
+                const uniqueProducts = [];
+                const seen = new Set();
+
+                products.forEach(p => {
+                    const key = `${p.name}-${p.price}`;
+                    if (!seen.has(key)) {
+                        seen.add(key);
+                        uniqueProducts.push(p);
+                    }
+                });
+
+                uniqueProducts.forEach(p => {
+                    const div = document.createElement('div');
+                    div.className = 'product';
+
+                    const imageUrl = `http://localhost:8080${p.imageUrl}`;
+
+                    const mrp = p.mrp || Math.round(p.price * 1.2);
+                    const saveAmount = mrp - p.price;
+
+                    div.innerHTML = `
+                        <img src="${imageUrl}" alt="${p.model || p.name}"
+                             onerror="this.src='http://localhost:8080/images/mobile.jpg';">
+                        <h3>${p.brand || ''} ${p.model || p.name}</h3>
+                        <p>${p.description || 'No description available.'}</p>
+
+                        <p class="price">₹${p.price.toLocaleString()}</p>
+                        <p class="mrp">M.R.P: <span>₹${mrp.toLocaleString()}</span></p>
+                        <p class="save">You Save: ₹${saveAmount.toLocaleString()}</p>
+                        
+                        ${p.rating > 0 ? `<p class="rating">Rating: ⭐ ${p.rating}</p>` : ''}
+                        ${p.tag ? `<span class="tag">${p.tag}</span>` : ''}
+                        
+                        <button onclick="addToCart(${p.id}, '${p.name}', ${p.price})">Add to Cart</button>
+                    `;
+                    container.appendChild(div);
+                });
+            })
+            .catch(err => {
+                console.error('Error fetching products:', err);
+                document.getElementById('productsContainer').innerHTML = '<p>Failed to load products.</p>';
+            });
+
+        // ✅ Add to Cart — Saved to LocalStorage
+        function addToCart(productId, name, price) {
+            let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+            const existingItem = cart.find(item => item.productId === productId);
+
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({ productId, name, price, quantity: 1 });
+            }
+
+            localStorage.setItem("cart", JSON.stringify(cart));
+
+            alert(`✅ ${name} added to cart!`);
+        }
+    </script>
+</body>
+</html>
